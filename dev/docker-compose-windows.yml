@@ -1,0 +1,44 @@
+version: '2'
+
+services:
+    db:
+        image: mysql:5.7
+        volumes:
+            - './.docker-data/db:/var/lib/mysql'
+        environment:
+            MYSQL_ROOT_PASSWORD: 'd0ck3r!'
+            MYSQL_DATABASE: 'db'
+            MYSQL_USER: 'user'
+            MYSQL_PASSWORD: 'passw0rd!'
+        ports:
+            - '3306:3306'
+    mail:
+        image: tophfr/mailcatcher
+        ports:
+            - '1080:80'
+    web:
+        image: tbmatuka/php-apache-development
+        volumes:
+            - '.:/app'
+            - './.docker-config/vhost.conf:/etc/apache2/sites-available/000-default.conf'
+            - './.docker-config/php.ini:/etc/php/php.ini'
+            # Uncomment the following line to override the SSL dir
+#            - './.docker-config/ssl:/etc/ssl/docker'
+            # Uncomment the following line to enable xdebug
+#            - './.docker-config/php-xdebug-phpstorm.ini:/etc/php/xdebug-settings.ini'
+        environment:
+#            PHP_VERSION: '7.4'
+            COMPOSER_ALLOW_XDEBUG: '1'
+            PHP_IDE_CONFIG: 'serverName=docker-php-apache'
+        ports:
+            - '80:80'
+            - '443:443'
+    nodejs:
+        image: tbmatuka/nodejs-development
+        volumes:
+            - '.:/app'
+            - './.docker-data/nodejs:/var/www/nvm-volume'
+            # Uncomment the following line to override the SSL dir
+#            - './.docker-config/ssl:/etc/ssl/docker'
+        ports:
+            - '3000:3000'

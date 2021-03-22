@@ -1,0 +1,106 @@
+FROM ubuntu:20.04
+
+# set up timezone
+ENV TIMEZONE="UTC"
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# install deps, apache, php and php modules all in one run and clean up afterwards to reduce the snapshot size
+RUN apt-get clean && \
+    apt-get -y update && \
+    apt-get install -y --force-yes \
+        locales \
+        curl \
+        software-properties-common \
+        git \
+        apt-transport-https \
+        sudo \
+        nvi \
+        iproute2 \
+        telnet \
+        dnsutils \
+        unzip \
+        rsync \
+        inetutils-ping && \
+    locale-gen en_US.UTF-8 && \
+    LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php && apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes \
+        apache2 \
+        nano \
+        lynx \
+        ssmtp \
+        imagemagick \
+        ##php-packages-5.6## \
+        ##php-packages-7.0## \
+        ##php-packages-7.1## \
+        ##php-packages-7.2## \
+        ##php-packages-7.3## \
+        ##php-packages-7.4## \
+        ##php-packages-8.0## \
+        php-phalcon3 \
+        php-phalcon4 \
+        php-mail && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# enable missing modules
+RUN phpenmod apcu && \
+    phpenmod apcu_bc && \
+    a2enmod rewrite headers ssl
+
+# output apache logs to stdout
+RUN ln -sf /proc/self/fd/1 /var/log/apache2/access.log && \
+    ln -sf /proc/self/fd/1 /var/log/apache2/error.log
+
+# set up sendmail so that mail() works
+RUN echo 'FromLineOverride=YES' >> /etc/ssmtp/ssmtp.conf && \
+    echo 'mailhub=mail:25' >> /etc/ssmtp/ssmtp.conf
+
+# prepare www-data to be used as main user
+RUN usermod -s /bin/bash -G staff www-data && \
+    sudo -u www-data mkdir -p /var/www
+
+COPY ./sudoers /etc/sudoers.d/www-data
+
+# install composer
+RUN curl https://getcomposer.org/composer-1.phar > composer1 && \
+    curl https://getcomposer.org/composer-2.phar > composer && \
+    mv composer1 composer /usr/local/bin/ && \
+    chown www-data:www-data /usr/local/bin/composer1 /usr/local/bin/composer && \
+    chmod +x /usr/local/bin/composer1 /usr/local/bin/composer
+
+# link php.ini
+COPY ./php.ini /etc/php.ini
+RUN for phpversion in 5.6 7.0 7.1 7.2 7.3 7.4 8.0; do \
+        for phpenv in apache2 cli; do \
+            mv "/etc/php/$phpversion/$phpenv/php.ini" "/etc/php/$phpversion/$phpenv/php.ini.dist" ; \
+            ln -s /etc/php/php.ini "/etc/php/$phpversion/$phpenv/php.ini"; \
+        done; \
+    done
+
+# add xdebug settings - don't enable the mod by default
+COPY ./php-xdebug.ini /etc/php/xdebug-settings.ini
+RUN for phpversion in 5.6 7.0 7.1 7.2 7.3 7.4 8.0; do \
+        rm "/etc/php/$phpversion/mods-available/xdebug.ini"; \
+        ln -s /etc/php/xdebug-settings.ini "/etc/php/$phpversion/mods-available/xdebug.ini"; \
+    done
+
+# prepare SSL
+COPY ./ssl /etc/ssl/docker
+
+# override default vhost
+COPY ./vhost.conf /etc/apache2/sites-available/000-default.conf
+
+# prepare entrypoint and default command
+COPY ./entrypoint.sh /usr/local/bin/
+COPY ./apache2-foreground.sh /usr/local/sbin/
+
+WORKDIR /app/
+
+USER www-data
+
+ENV DOCKER="yes"
+
+EXPOSE 80 443
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+CMD ["sudo", "/usr/local/sbin/apache2-foreground.sh"]
