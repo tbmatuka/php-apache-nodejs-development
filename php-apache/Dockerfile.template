@@ -36,8 +36,6 @@ RUN apt-get clean && \
         ##php-packages-7.3## \
         ##php-packages-7.4## \
         ##php-packages-8.0## \
-        php-phalcon3 \
-        php-phalcon4 \
         php-mail && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
