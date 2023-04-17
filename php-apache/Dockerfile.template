@@ -44,7 +44,7 @@ RUN apt-get clean && \
 # enable missing modules
 RUN phpenmod apcu && \
     phpenmod apcu_bc && \
-    a2enmod rewrite headers ssl
+    a2enmod rewrite headers ssl expires proxy
 
 # output apache logs to stdout
 RUN ln -sf /proc/self/fd/1 /var/log/apache2/access.log && \
