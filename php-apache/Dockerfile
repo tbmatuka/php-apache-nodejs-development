@@ -38,6 +38,7 @@ RUN apt-get clean && \
         libapache2-mod-php8.0 php8.0 php8.0-amqp php8.0-apcu php8.0-bcmath php8.0-bz2 php8.0-cgi php8.0-cli php8.0-common php8.0-curl php8.0-dev php8.0-gd php8.0-gmp php8.0-imagick php8.0-imap php8.0-intl php8.0-ldap php8.0-mailparse php8.0-mbstring php8.0-memcached php8.0-mysql php8.0-odbc php8.0-opcache php8.0-pgsql php8.0-pspell php8.0-readline php8.0-redis php8.0-snmp php8.0-soap php8.0-sqlite3 php8.0-tidy php8.0-uuid php8.0-xdebug php8.0-xml php8.0-xsl php8.0-yaml php8.0-zip php8.0-zmq \
         libapache2-mod-php8.1 php8.1 php8.1-amqp php8.1-apcu php8.1-bcmath php8.1-bz2 php8.1-cgi php8.1-cli php8.1-common php8.1-curl php8.1-dev php8.1-gd php8.1-gmp php8.1-imagick php8.1-imap php8.1-intl php8.1-ldap php8.1-mailparse php8.1-mbstring php8.1-memcached php8.1-mysql php8.1-odbc php8.1-opcache php8.1-pgsql php8.1-pspell php8.1-readline php8.1-redis php8.1-snmp php8.1-soap php8.1-sqlite3 php8.1-tidy php8.1-uuid php8.1-xdebug php8.1-xml php8.1-xsl php8.1-yaml php8.1-zip php8.1-zmq \
         libapache2-mod-php8.2 php8.2 php8.2-amqp php8.2-apcu php8.2-bcmath php8.2-bz2 php8.2-cgi php8.2-cli php8.2-common php8.2-curl php8.2-dev php8.2-gd php8.2-gmp php8.2-imagick php8.2-imap php8.2-intl php8.2-ldap php8.2-mailparse php8.2-mbstring php8.2-memcached php8.2-mysql php8.2-odbc php8.2-opcache php8.2-pgsql php8.2-pspell php8.2-readline php8.2-redis php8.2-snmp php8.2-soap php8.2-sqlite3 php8.2-tidy php8.2-uuid php8.2-xdebug php8.2-xml php8.2-xsl php8.2-yaml php8.2-zip php8.2-zmq \
+        libapache2-mod-php8.3 php8.3 php8.3-amqp php8.3-apcu php8.3-bcmath php8.3-bz2 php8.3-cgi php8.3-cli php8.3-common php8.3-curl php8.3-dev php8.3-gd php8.3-gmp php8.3-imagick php8.3-imap php8.3-intl php8.3-ldap php8.3-mailparse php8.3-mbstring php8.3-memcached php8.3-mysql php8.3-odbc php8.3-opcache php8.3-pgsql php8.3-pspell php8.3-readline php8.3-redis php8.3-snmp php8.3-soap php8.3-sqlite3 php8.3-tidy php8.3-uuid php8.3-xdebug php8.3-xml php8.3-xsl php8.3-yaml php8.3-zip php8.3-zmq \
         php-mail && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -69,7 +70,7 @@ RUN curl https://getcomposer.org/composer-1.phar > composer1 && \
 
 # link php.ini
 COPY ./php.ini /etc/php.ini
-RUN for phpversion in 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2; do \
+RUN for phpversion in 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2 8.3; do \
         for phpenv in apache2 cli; do \
             mv "/etc/php/$phpversion/$phpenv/php.ini" "/etc/php/$phpversion/$phpenv/php.ini.dist" ; \
             ln -s /etc/php/php.ini "/etc/php/$phpversion/$phpenv/php.ini"; \
@@ -78,7 +79,7 @@ RUN for phpversion in 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2; do \
 
 # add xdebug settings - don't enable the mod by default
 COPY ./php-xdebug.ini /etc/php/xdebug-settings.ini
-RUN for phpversion in 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2; do \
+RUN for phpversion in 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2 8.3; do \
         rm "/etc/php/$phpversion/mods-available/xdebug.ini"; \
         ln -s /etc/php/xdebug-settings.ini "/etc/php/$phpversion/mods-available/xdebug.ini"; \
     done

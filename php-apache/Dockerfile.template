@@ -38,6 +38,7 @@ RUN apt-get clean && \
         ##php-packages-8.0## \
         ##php-packages-8.1## \
         ##php-packages-8.2## \
+        ##php-packages-8.3## \
         php-mail && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -69,7 +70,7 @@ RUN curl https://getcomposer.org/composer-1.phar > composer1 && \
 
 # link php.ini
 COPY ./php.ini /etc/php.ini
-RUN for phpversion in 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2; do \
+RUN for phpversion in 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2 8.3; do \
         for phpenv in apache2 cli; do \
             mv "/etc/php/$phpversion/$phpenv/php.ini" "/etc/php/$phpversion/$phpenv/php.ini.dist" ; \
             ln -s /etc/php/php.ini "/etc/php/$phpversion/$phpenv/php.ini"; \
@@ -78,7 +79,7 @@ RUN for phpversion in 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2; do \
 
 # add xdebug settings - don't enable the mod by default
 COPY ./php-xdebug.ini /etc/php/xdebug-settings.ini
-RUN for phpversion in 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2; do \
+RUN for phpversion in 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2 8.3; do \
         rm "/etc/php/$phpversion/mods-available/xdebug.ini"; \
         ln -s /etc/php/xdebug-settings.ini "/etc/php/$phpversion/mods-available/xdebug.ini"; \
     done
