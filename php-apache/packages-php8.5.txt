@@ -20,7 +20,6 @@ php8.5-mbstring
 php8.5-memcached
 php8.5-mysql
 php8.5-odbc
-php8.5-opcache
 php8.5-pgsql
 php8.5-pspell
 php8.5-readline
