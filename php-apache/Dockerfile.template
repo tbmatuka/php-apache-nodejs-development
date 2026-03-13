@@ -41,6 +41,7 @@ RUN apt-get clean && \
         ##php-packages-8.3## \
         ##php-packages-8.4## \
         ##php-packages-8.5## \
+        php-redis && \
         php-mail && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
