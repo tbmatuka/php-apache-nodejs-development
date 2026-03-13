@@ -39,6 +39,8 @@ RUN apt-get clean && \
         libapache2-mod-php8.1 php8.1 php8.1-amqp php8.1-apcu php8.1-bcmath php8.1-bz2 php8.1-cgi php8.1-cli php8.1-common php8.1-curl php8.1-dev php8.1-gd php8.1-gmp php8.1-imagick php8.1-imap php8.1-intl php8.1-ldap php8.1-mailparse php8.1-mbstring php8.1-memcached php8.1-mysql php8.1-odbc php8.1-opcache php8.1-pgsql php8.1-pspell php8.1-readline php8.1-redis php8.1-snmp php8.1-soap php8.1-sqlite3 php8.1-tidy php8.1-uuid php8.1-xdebug php8.1-xml php8.1-xsl php8.1-yaml php8.1-zip php8.1-zmq \
         libapache2-mod-php8.2 php8.2 php8.2-amqp php8.2-apcu php8.2-bcmath php8.2-bz2 php8.2-cgi php8.2-cli php8.2-common php8.2-curl php8.2-dev php8.2-gd php8.2-gmp php8.2-imagick php8.2-imap php8.2-intl php8.2-ldap php8.2-mailparse php8.2-mbstring php8.2-memcached php8.2-mysql php8.2-odbc php8.2-opcache php8.2-pgsql php8.2-pspell php8.2-readline php8.2-redis php8.2-snmp php8.2-soap php8.2-sqlite3 php8.2-tidy php8.2-uuid php8.2-xdebug php8.2-xml php8.2-xsl php8.2-yaml php8.2-zip php8.2-zmq \
         libapache2-mod-php8.3 php8.3 php8.3-amqp php8.3-apcu php8.3-bcmath php8.3-bz2 php8.3-cgi php8.3-cli php8.3-common php8.3-curl php8.3-dev php8.3-gd php8.3-gmp php8.3-imagick php8.3-imap php8.3-intl php8.3-ldap php8.3-mailparse php8.3-mbstring php8.3-memcached php8.3-mysql php8.3-odbc php8.3-opcache php8.3-pgsql php8.3-pspell php8.3-readline php8.3-redis php8.3-snmp php8.3-soap php8.3-sqlite3 php8.3-tidy php8.3-uuid php8.3-xdebug php8.3-xml php8.3-xsl php8.3-yaml php8.3-zip php8.3-zmq \
+        libapache2-mod-php8.4 php8.4 php8.4-amqp php8.4-apcu php8.4-bcmath php8.4-bz2 php8.4-cgi php8.4-cli php8.4-common php8.4-curl php8.4-dev php8.4-gd php8.4-gmp php8.4-imagick php8.4-imap php8.4-intl php8.4-ldap php8.4-mailparse php8.4-mbstring php8.4-memcached php8.4-mysql php8.4-odbc php8.4-opcache php8.4-pgsql php8.4-pspell php8.4-readline php8.4-redis php8.4-snmp php8.4-soap php8.4-sqlite3 php8.4-tidy php8.4-uuid php8.4-xdebug php8.4-xml php8.4-xsl php8.4-yaml php8.4-zip php8.4-zmq \
+        libapache2-mod-php8.5 php8.5 php8.5-amqp php8.5-apcu php8.5-bcmath php8.5-bz2 php8.5-cgi php8.5-cli php8.5-common php8.5-curl php8.5-dev php8.5-gd php8.5-gmp php8.5-imagick php8.5-imap php8.5-intl php8.5-ldap php8.5-mailparse php8.5-mbstring php8.5-memcached php8.5-mysql php8.5-odbc php8.5-opcache php8.5-pgsql php8.5-pspell php8.5-readline php8.5-redis php8.5-snmp php8.5-soap php8.5-sqlite3 php8.5-tidy php8.5-uuid php8.5-xdebug php8.5-xml php8.5-xsl php8.5-yaml php8.5-zip php8.5-zmq \
         php-mail && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -70,7 +72,7 @@ RUN curl https://getcomposer.org/composer-1.phar > composer1 && \
 
 # link php.ini
 COPY ./php.ini /etc/php.ini
-RUN for phpversion in 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2 8.3; do \
+RUN for phpversion in 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2 8.3 8.4 8.5; do \
         for phpenv in apache2 cli; do \
             mv "/etc/php/$phpversion/$phpenv/php.ini" "/etc/php/$phpversion/$phpenv/php.ini.dist" ; \
             ln -s /etc/php/php.ini "/etc/php/$phpversion/$phpenv/php.ini"; \
@@ -79,7 +81,7 @@ RUN for phpversion in 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2 8.3; do \
 
 # add xdebug settings - don't enable the mod by default
 COPY ./php-xdebug.ini /etc/php/xdebug-settings.ini
-RUN for phpversion in 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2 8.3; do \
+RUN for phpversion in 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2 8.3 8.4 8.5; do \
         rm "/etc/php/$phpversion/mods-available/xdebug.ini"; \
         ln -s /etc/php/xdebug-settings.ini "/etc/php/$phpversion/mods-available/xdebug.ini"; \
     done

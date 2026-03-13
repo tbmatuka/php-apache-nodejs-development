@@ -1,8 +1,6 @@
-version: '2'
-
 services:
     db:
-        image: mysql:5.7
+        image: mysql:8.0
         volumes:
             - './.docker-data/db:/var/lib/mysql'
         environment:
@@ -11,12 +9,13 @@ services:
             MYSQL_USER: 'user'
             MYSQL_PASSWORD: 'passw0rd!'
             TERM: '$TERM'
+        user: '$DOCKER_UID:$DOCKER_GID'
         ports:
             - '3306:3306'
     mail:
-        image: tophfr/mailcatcher
+        image: sj26/mailcatcher
         ports:
-            - '1080:80'
+            - '1080:1080'
     web:
         build:
             context: ./.docker-config/
@@ -33,7 +32,7 @@ services:
             # Uncomment the following line to enable xdebug
 #            - './.docker-config/php-xdebug-phpstorm.ini:/etc/php/xdebug-settings.ini'
         environment:
-#            PHP_VERSION: '7.4'
+#            PHP_VERSION: '8.5'
             COMPOSER_ALLOW_XDEBUG: '1'
             PHP_IDE_CONFIG: 'serverName=docker-php-apache'
             TERM: '$TERM'
@@ -60,3 +59,5 @@ services:
             - 'host.docker.internal:host-gateway'
         ports:
             - '3000:3000'
+        # Uncomment the following line to run a node command on start
+#        command: ['yarn', 'dev']
